@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desktop Heat Recovery</title>
+<style>
+:root{color-scheme:light;--ink:#1c2430;--mute:#5b6675;--line:#e3e7ec;--hot:#e0593b;--cold:#2f7fc1;--bg:#fbfcfd;--card:#fff}
+*{box-sizing:border-box}body{margin:0;font:16px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+.wrap{max-width:960px;margin:0 auto;padding:0 22px}
+header{padding:64px 0 36px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#fff5f2 0%,#f0f6fc 100%)}
+h1{font-size:42px;line-height:1.1;margin:0 0 12px;letter-spacing:-.02em}h2{font-size:26px;margin:0 0 14px;letter-spacing:-.01em}
+.lede{font-size:19px;color:var(--mute);max-width:680px}
+.tag{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--hot);margin-bottom:10px}
+section{padding:48px 0;border-bottom:1px solid var(--line)}
+.grid{display:grid;gap:18px}.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card h3{margin:6px 0 4px;font-size:17px}.card p{margin:0;color:var(--mute);font-size:14.5px}
+.card img{width:100%;height:170px;object-fit:contain}
+.stat{font-size:30px;font-weight:700}.stat small{font-size:15px;font-weight:500;color:var(--mute)}
+ol.steps{padding-left:20px}ol.steps li{margin:0 0 10px}
+.formula{font:600 20px/1.4 ui-monospace,Menlo,monospace;background:#f3f5f8;border-radius:10px;padding:16px 18px;margin:12px 0}
+.calc{display:flex;flex-wrap:wrap;gap:16px;align-items:end}.calc label{font-size:13px;color:var(--mute);display:block}
+.calc input{font-size:18px;width:110px;padding:6px 8px;border:1px solid var(--line);border-radius:8px}
+.calc .out{font-size:26px;font-weight:700;color:var(--hot)}
+.chart{position:relative;height:280px}
+.note{font-size:13.5px;color:var(--mute);background:#fff8e6;border:1px solid #f3e2b3;border-radius:8px;padding:10px 12px;margin-top:12px}
+code{font:14px ui-monospace,Menlo,monospace;background:#f3f5f8;padding:1px 5px;border-radius:4px}
+pre{background:#1f2630;color:#e7edf3;padding:14px 16px;border-radius:10px;overflow:auto;font-size:13.5px}
+a.btn{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:600;margin:6px 8px 0 0}
+a.btn.alt{background:#fff;color:var(--ink);border:1px solid var(--line)}
+footer{padding:30px 0;color:var(--mute);font-size:14px}
+</style></head><body>
+<header><div class="wrap">
+<div class="tag">Desktop-scale experiment</div>
+<h1>Desktop Heat Recovery</h1>
+<p class="lede">Data centers already reuse the heat from liquid cooling. This project tests the same idea on one computer: move CPU heat into a small water tank, then measure how much heat you get back and what it costs in cooling.</p>
+<a class="btn" href="#REPO_URL">View code on GitHub</a><a class="btn alt" href="#cad">CAD files</a><a class="btn alt" href="#results">Results</a>
+</div></header>
+
+<section><div class="wrap">
+<h2>How it works</h2>
+<p>There are two water loops. They never mix. The <b>heat exchanger</b> moves heat from one to the other through thin metal plates, the same way a car's radiator moves engine heat into the air.</p>
+SVG_DIAGRAM
+<p style="color:var(--mute);font-size:14.5px">The radiator stays in the PC loop. Once the tank warms up it stops taking in much heat, and the CPU still needs cooling.</p>
+</div></section>
+
+<section id="cad"><div class="wrap">
+<h2>3D-printed parts</h2>
+<p>Each part has an editable OpenSCAD file (change the numbers at the top) and a ready-to-print STL.</p>
+<div class="grid g3">
+<div class="card"><img src="IMG_tank_lid" alt="Tank lid"><h3>Tank lid</h3><p>Plugs into a 120 mm opening. Two 12.5 mm ports for inlet/outlet, two 6.5 mm probe ports (top and bottom of tank), and a vent.</p></div>
+<div class="card"><img src="IMG_tube_probe_clip" alt="Probe clip"><h3>Tube-probe clip ×4</h3><p>Snaps onto 13 mm tubing and holds a temperature probe against it. Goes on the inlet and outlet of the heat exchanger on both loops.</p></div>
+<div class="card"><img src="IMG_hx_pump_tray" alt="Drip tray"><h3>Drip tray</h3><p>160 × 90 mm tray with a 12 mm rim. Zip-tie slots for the heat exchanger and pump, and M4 mounting holes. Catches small leaks.</p></div>
+</div></div></section>
+
+<section><div class="wrap">
+<h2>Method</h2>
+<ol class="steps">
+<li><b>Baseline.</b> Run the same one-hour CPU workload with normal cooling. Log wall power, CPU temperature, clock speed, work done per second, and room temperature.</li>
+<li><b>Prove the plumbing.</b> Use a 12 V heater as the heat source first. Leak-test with the computer unplugged. The tank feeds the pump from below so the pump never runs dry.</li>
+<li><b>Recovery runs.</b> Start the tank at the same temperature each time. The Raspberry Pi logs 7 probes every 5 s while the PC logs its own data.</li>
+<li><b>Cooldown test.</b> Let the full tank cool for 2–3 hours. This shows how fast it leaks heat, so the result can be corrected.</li>
+<li><b>Repeat</b> at least 3 times and report the average and spread.</li>
+</ol>
+</div></section>
+
+<section><div class="wrap">
+<h2>The math</h2>
+<div class="formula">heat captured (Wh) ≈ 1.163 × litres × temperature rise (°C)</div>
+<p>Why 1.163? Heating 1 L of water by 1 °C takes 4186 joules, and 1 watt-hour is 3600 joules. 4186 ÷ 3600 = 1.163.</p>
+<div class="card calc">
+<div><label>Tank size (L)</label><input id="L" type="number" value="2" step="0.1" min="0"></div>
+<div><label>Temperature rise (°C)</label><input id="dT" type="number" value="10" step="0.5"></div>
+<div><label>Heat stored</label><div class="out" id="wh">23.3 Wh</div></div>
+</div>
+<p class="note">Captured heat only counts as <b>energy saved</b> if you use it for something you would otherwise heat another way, like preheating water.</p>
+</div></section>
+
+<section id="results"><div class="wrap">
+<h2>Results</h2>
+<p class="note" style="margin-top:0">⚠ <b>These numbers are from simulated data</b> made with <code>make_sample_data.py</code>. Replace them after your real runs.</p>
+<div class="grid g4" style="margin:18px 0">
+<div class="card"><div class="stat">R_CAPTURED <small>Wh</small></div><p>heat captured in 1 h</p></div>
+<div class="card"><div class="stat">R_PUMP <small>Wh</small></div><p>tank-pump electricity</p></div>
+<div class="card"><div class="stat">R_TMAX <small>°C</small></div><p>max CPU temp (baseline R_BTMAX)</p></div>
+<div class="card"><div class="stat">R_THRU <small>%</small></div><p>change in work done vs baseline</p></div>
+</div>
+<div class="card"><div class="chart"><canvas id="c1"></canvas></div></div>
+<p style="margin-top:14px"><b>Résumé line:</b> <i>"Recovered R_CAPTURED Wh of heat during a one-hour workload while keeping CPU temperature below R_TCEIL °C; secondary pump consumed R_PUMP Wh."</i></p>
+</div></section>
+
+<section><div class="wrap">
+<h2>Code</h2>
+<pre>pip install -r logger/requirements.txt
+python3 logger/pi_logger.py --out pi_run01.csv          # on the Raspberry Pi
+python  logger/pc_logger.py --minutes 60 --out pc_run01.csv   # on the PC
+python  analysis/analyze.py run --pi pi_run01.csv --pc pc_run01.csv --info run01.json --baseline pc_baseline01.csv</pre>
+<a class="btn" href="#REPO_URL">GitHub repository</a>
+</div></section>
+
+<footer><div class="wrap">Built by Anagha Iyer · Stanford</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<script>
+const L=document.getElementById('L'),dT=document.getElementById('dT'),wh=document.getElementById('wh');
+function calc(){wh.textContent=(1.163*(+L.value||0)*(+dT.value||0)).toFixed(1)+' Wh'}L.oninput=dT.oninput=calc;calc();
+const D=CHART_DATA;
+if(window.Chart){new Chart(document.getElementById('c1'),{type:'line',data:{labels:D.min,datasets:[
+{label:'Tank (°C)',data:D.tank,borderColor:'#2f7fc1',pointRadius:0,borderWidth:2},
+{label:'CPU, heat recovery (°C)',data:D.cpu,borderColor:'#e0593b',pointRadius:0,borderWidth:2},
+{label:'CPU, baseline (°C)',data:D.base,borderColor:'#e0593b',borderDash:[5,4],pointRadius:0,borderWidth:1.5}]},
+options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+scales:{x:{title:{display:true,text:'minutes'},ticks:{maxTicksLimit:7}},y:{title:{display:true,text:'°C'}}}}})}
+</script>
+</body></html>
