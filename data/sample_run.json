@@ -1,0 +1,8 @@
+{
+  "label": "SIMULATED sample run",
+  "litres": 2.0,
+  "pump_watts": 4.0,
+  "loss_k_per_h": 0.18,
+  "wall_kwh_start": 12.3,
+  "wall_kwh_end": 12.462
+}
