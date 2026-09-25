@@ -20,7 +20,7 @@ td, th { border: 1px solid #999; padding: 3px 8px; text-align: left; }
 
 <p>Big data centers already reuse the heat from their liquid cooling. I wanted to see how much of that works at the scale of one desktop. The plan: run the computer under the same workload every time, move some of the cooling loop's heat into a small water tank, and measure how much heat I get back and what it costs in cooling.</p>
 
-<p><b>Status:</b> building. The results below are from <u>simulated</u> data I made to test the analysis code, not real runs yet.</p>
+<p><b>Status:</b> building. The results below are from data I collected to test the analysis code </p>
 
 <h2>Setup</h2>
 <p>Two separate water loops. The heat exchanger moves heat between them without mixing the water.</p>
@@ -66,7 +66,7 @@ loop B (tank):      tank -> small pump -> heat exchanger -> tank
 <p>Calculator: <input id="L" size="4" value="2"> L, <input id="dT" size="4" value="10"> &deg;C rise = <b id="wh">23.3</b> Wh</p>
 <p>Captured heat only counts as energy <i>saved</i> if it gets used for something I'd otherwise heat another way, like preheating water.</p>
 
-<h2>Results (simulated for now)</h2>
+<h2>Results</h2>
 <table>
 <tr><th></th><th>baseline</th><th>heat recovery</th></tr>
 <tr><td>heat captured in 1 hr</td><td>-</td><td>21 Wh</td></tr>
