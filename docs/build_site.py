@@ -21,9 +21,10 @@ chart = {"min": [round(x / 60) for x in pc["elapsed_s"][::step]],
 
 svg = open(os.path.join(HERE, "loops.svg")).read()
 html = open(os.path.join(HERE, "template.html")).read()
-for part in ("tank_lid", "tube_probe_clip", "hx_pump_tray"):
-    img = base64.b64encode(open(os.path.join(ROOT, "cad", "previews", f"{part}.png"), "rb").read()).decode()
-    html = html.replace(f"IMG_{part}", "data:image/png;base64," + img)
+imgs = {p: os.path.join(ROOT, "cad", "previews", f"{p}.png") for p in ("tank_lid", "tube_probe_clip", "hx_pump_tray")}
+imgs["results"] = os.path.join(D, "results.png")
+for name, path in imgs.items():
+    html = html.replace(f"IMG_{name}", "data:image/png;base64," + base64.b64encode(open(path, "rb").read()).decode())
 rep = {"SVG_DIAGRAM": svg, "CHART_DATA": json.dumps(chart), "#REPO_URL": a.repo,
        "R_CAPTURED": f'{r["heat_captured_wh"]:.0f}', "R_PUMP": f'{r["pump_wh"]:.1f}',
        "R_TMAX": f'{r["cpu_temp_max_c"]:.0f}', "R_BTMAX": f'{r["baseline_cpu_temp_max_c"]:.0f} °C',
